@@ -1,0 +1,13 @@
+@import "tailwindcss";
+.test-tailwind { @apply bg-slate-950; }
+@source "./app/**/*.{html,ts}";
+
+@theme {
+  --color-brand-primary: #6366f1;
+  --color-brand-secondary: #8b5cf6;
+  --color-brand-accent: #ec4899;
+  --color-brand-surface: #0f172a;
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", var(--font-sans);
+}

@@ -1,0 +1,57 @@
+<nav class="premium-navbar">
+  <div class="navbar-container">
+    
+    <!-- Brand Logo -->
+    <div class="brand-section" routerLink="/dashboard">
+      <div class="logo-box">
+        <mat-icon>confirmation_number</mat-icon>
+      </div>
+      <span class="brand-name">
+        Alpha<span class="accent">Tickets</span>
+      </span>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="nav-links">
+      @for (item of authService.userFunctions(); track item.path) {
+        <a [routerLink]="item.path" 
+           routerLinkActive="active-link"
+           class="nav-item">
+          <mat-icon>{{item.icon}}</mat-icon>
+          <span>{{item.name}}</span>
+        </a>
+      }
+    </div>
+
+    <!-- User Section -->
+    <div class="user-section">
+      <div class="user-info-box" [matMenuTriggerFor]="userMenu">
+        <div class="avatar-circle">
+          {{ (authService.currentUser()?.name || 'U').substring(0,1) }}
+        </div>
+        <div class="user-details hidden-mobile">
+          <p class="user-name">{{ authService.currentUser()?.name || 'Usuario' }}</p>
+          <p class="user-role">{{ authService.role() }}</p>
+        </div>
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </div>
+
+      <mat-menu #userMenu="matMenu" class="premium-menu">
+        <div class="menu-header">
+          <p class="menu-label">Cuenta de Usuario</p>
+          <p class="menu-email">{{ authService.currentUser()?.name }}</p>
+        </div>
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          <span>Configuración</span>
+        </button>
+        <div class="menu-divider"></div>
+        <button mat-menu-item (click)="logout()" class="logout-item">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar Sesión</span>
+        </button>
+      </mat-menu>
+    </div>
+
+  </div>
+</nav>

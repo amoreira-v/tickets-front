@@ -1,0 +1,108 @@
+<div class="admin-container">
+  <div class="max-width-container">
+    
+    <!-- Header Section -->
+    <header class="admin-header">
+      <div class="header-title-section">
+        <nav class="breadcrumb">
+          <span>Administración</span>
+          <mat-icon>chevron_right</mat-icon>
+          <span class="active">Backoffice</span>
+        </nav>
+        <h1 class="main-title">
+          Control de <span class="text-gradient">Configuración</span>
+        </h1>
+        <p class="subtitle">Gestiona perfiles, módulos y opciones globales del sistema</p>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button mat-flat-button class="btn-outline" routerLink="/tickets">
+          <mat-icon style="margin-right: 8px;">arrow_back</mat-icon>
+          Regresar a Tickets
+        </button>
+
+        <button mat-icon-button class="btn-logout" (click)="logout()" matTooltip="Cerrar Sesión">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Tabs -->
+    <div class="premium-card">
+      <div class="card-top-accent"></div>
+      
+      <mat-tab-group animationDuration="600ms" class="premium-tabs">
+        
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <mat-icon>people</mat-icon>
+              <span>Perfiles</span>
+            </div>
+          </ng-template>
+          <div style="padding: 2rem;">
+            <app-profile-list></app-profile-list>
+          </div>
+        </mat-tab>
+
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <mat-icon>view_module</mat-icon>
+              <span>Módulos</span>
+            </div>
+          </ng-template>
+          <div style="padding: 2rem;">
+            <app-module-list></app-module-list>
+          </div>
+        </mat-tab>
+
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <mat-icon>list</mat-icon>
+              <span>Opciones</span>
+            </div>
+          </ng-template>
+          <div style="padding: 2rem;">
+            <app-option-list></app-option-list>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card indigo">
+        <div class="icon-box">
+          <mat-icon>security</mat-icon>
+        </div>
+        <div class="stat-info">
+          <p class="label">Seguridad</p>
+          <p class="value">Nivel: {{ authService.role() }}</p>
+        </div>
+      </div>
+      
+      <div class="stat-card violet">
+        <div class="icon-box">
+          <mat-icon>settings_suggest</mat-icon>
+        </div>
+        <div class="stat-info">
+          <p class="label">Estado</p>
+          <p class="value">Sistema Operativo</p>
+        </div>
+      </div>
+
+      <div class="stat-card slate">
+        <div class="icon-box">
+          <mat-icon>history</mat-icon>
+        </div>
+        <div class="stat-info">
+          <p class="label">Sesión</p>
+          <p class="value">Activo ahora</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

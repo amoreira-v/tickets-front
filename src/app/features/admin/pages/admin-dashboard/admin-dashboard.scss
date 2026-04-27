@@ -1,0 +1,195 @@
+.admin-container {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.max-width-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  gap: 1.5rem;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.header-title-section {
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    
+    .active { color: #4f46e5; }
+    mat-icon { font-size: 12px; width: 12px; height: 12px; display: flex; align-items: center; }
+  }
+
+  .main-title {
+    font-size: 3rem;
+    font-weight: 900;
+    font-family: 'Outfit', sans-serif;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin: 0;
+    
+    .text-gradient {
+      background: linear-gradient(to right, #4f46e5, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .subtitle {
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 0.5rem;
+  }
+}
+
+.premium-card {
+  background: white;
+  border-radius: 2.5rem;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+  position: relative;
+  
+  .card-top-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(to right, #4f46e5, #7c3aed, #9333ea);
+  }
+}
+
+.premium-tabs {
+  ::ng-deep {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid #f1f5f9;
+      background: #fcfdfe;
+      padding-top: 1rem;
+    }
+
+    .mat-mdc-tab {
+      height: 64px;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+      
+      &.mdc-tab--active {
+        opacity: 1;
+        .mdc-tab__text-label { color: #4f46e5; }
+      }
+    }
+
+    .mdc-tab__text-label {
+      font-family: "Outfit", sans-serif !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.01em !important;
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: #4f46e5 !important;
+      border-top-width: 3px !important;
+    }
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stat-card {
+  padding: 1.5rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-width: 1px;
+  border-style: solid;
+  
+  .icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 1rem;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+  
+  .stat-info {
+    .label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; }
+    .value { font-size: 14px; font-weight: 800; color: #0f172a; }
+  }
+  
+  &.indigo { background: #eef2ff; border-color: #e0e7ff; .icon-box { color: #4f46e5; } }
+  &.violet { background: #f5f3ff; border-color: #ede9fe; .icon-box { color: #7c3aed; } }
+  &.slate { background: #f8fafc; border-color: #f1f5f9; .icon-box { color: #64748b; } }
+}
+
+.btn-outline {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 1rem !important;
+  height: 48px !important;
+  padding: 0 1.5rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  background: white !important;
+  transition: all 0.3s !important;
+}
+
+.btn-outline:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(-1px);
+}
+
+.btn-logout {
+  background: white !important;
+  color: #64748b !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  width: 48px !important;
+  height: 48px !important;
+  transition: all 0.3s !important;
+  
+  &:hover {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    border-color: #fecaca !important;
+    transform: rotate(-10deg) scale(1.1);
+  }
+}

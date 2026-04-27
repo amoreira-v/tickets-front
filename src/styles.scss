@@ -1,0 +1,133 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  
+  // Usamos el tema estándar de M3 y personalizamos vía variables CSS para evitar errores de compilación
+  $theme: mat.define-theme();
+
+  @include mat.all-component-themes($theme);
+  @include mat.typography-hierarchy($theme);
+}
+
+:root {
+  /* Brand Colors Overrides for Material 3 Components */
+  --mat-sys-primary: #6366f1;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #e0e7ff;
+  --mat-sys-on-primary-container: #312e81;
+  --mat-sys-secondary: #8b5cf6;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-tertiary: #ec4899;
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-surface: #f8fafc;
+  --mat-sys-on-surface: #0f172a;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border-radius: 9999px;
+  transition: background-color 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5); /* brand-primary/50 */
+}
+
+/* Material Component Enhancements */
+.mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-flat-button {
+  border-radius: 0.75rem; /* rounded-xl */
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  transition: all 0.3s;
+}
+
+.mat-mdc-card {
+  border-radius: 1.5rem; /* rounded-3xl */
+  border: none;
+  box-shadow: 0 20px 25px -5px rgba(226, 232, 240, 0.5);
+}
+
+
+/* Premium Animations */
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Premium Utility Classes */
+.text-gradient {
+  background: linear-gradient(to right, var(--mat-sys-primary), var(--mat-sys-tertiary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.bg-slate-50 {
+  background-color: #f8fafc !important;
+}
+

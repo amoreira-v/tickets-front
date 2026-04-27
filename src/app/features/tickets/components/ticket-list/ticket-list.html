@@ -1,0 +1,153 @@
+<div class="dashboard-container">
+  <div class="max-width-container">
+    
+    <!-- Header Section -->
+    <header class="dashboard-header">
+      <div class="header-title-section">
+        <nav class="breadcrumb">
+          <span>Sistema</span>
+          <mat-icon>chevron_right</mat-icon>
+          <span class="active">Tickets</span>
+        </nav>
+        <h1 class="main-title">
+          Gestión de <span class="text-gradient">Servicios</span>
+        </h1>
+        <p class="subtitle">
+          <span class="status-dot"></span>
+          Panel de control para <span style="font-weight: 800; color: #334155;">{{ authService.role() }}</span>
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <div class="stats-summary">
+          <span class="label">Resumen</span>
+          <span class="value">{{ dataSource.data.length }} Tickets Activos</span>
+        </div>
+        
+        @if (authService.role() === 'ADMIN') {
+          <button mat-flat-button class="btn-dark" routerLink="/admin">
+            <mat-icon style="margin-right: 8px;">admin_panel_settings</mat-icon>
+            Backoffice
+          </button>
+        }
+        @if (authService.role() === 'CLIENT') {
+          <button mat-flat-button class="btn-primary" (click)="openCreateDialog()">
+            <mat-icon style="margin-right: 8px;">add_circle</mat-icon>
+            Nuevo Ticket
+          </button>
+        }
+
+        <button mat-icon-button class="btn-logout" (click)="logout()" matTooltip="Cerrar Sesión">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Table Container -->
+    <div class="premium-card">
+      <div class="card-top-accent"></div>
+      
+      @if (loading) {
+        <div style="padding: 5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; border: 4px solid #f1f5f9; border-top-color: #6366f1; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+          <p style="font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.2em;">Sincronizando datos...</p>
+        </div>
+      } @else {
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="dataSource">
+            
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef style="padding-left: 2rem;"> Identificador </th>
+              <td mat-cell *matCellDef="let element" style="padding-left: 2rem;"> 
+                <span class="id-badge">
+                  #{{element.id.substring(0,8)}}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Title Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef> Requerimiento </th>
+              <td mat-cell *matCellDef="let element">
+                <div class="ticket-info">
+                  <span class="title">{{element.title}}</span>
+                  <span class="meta">Reportado por {{element.userId || 'Sistema'}}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Estado </th>
+              <td mat-cell *matCellDef="let element" style="text-align: center;"> 
+                <span class="status-chip" [ngClass]="getStatusClass(element.status)">
+                  {{element.status}}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Priority Column -->
+            <ng-container matColumnDef="priority">
+              <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Prioridad </th>
+              <td mat-cell *matCellDef="let element"> 
+                <div class="priority-cell" [ngClass]="getPriorityClass(element.priority)">
+                  <span class="dot" [style.background-color]="element.priority === 'HIGH' ? '#f43f5e' : (element.priority === 'MEDIUM' ? '#f59e0b' : '#3b82f6')"></span>
+                  <span class="label">{{element.priority}}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Created At Column -->
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef class="hidden-mobile"> Fecha Registro </th>
+              <td mat-cell *matCellDef="let element" class="hidden-mobile"> 
+                <div class="date-info">
+                  <span class="date">{{element.created_at | date:'MMM d, y'}}</span>
+                  <span class="time">{{element.created_at | date:'shortTime'}}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef style="padding-right: 2rem; text-align: right;"> Gestión </th>
+              <td mat-cell *matCellDef="let element" style="padding-right: 2rem; text-align: right;">
+                <button mat-icon-button style="color: #94a3b8;" (click)="$event.stopPropagation(); openDetailDialog(element)">
+                  <mat-icon>arrow_forward_ios</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openDetailDialog(row)"></tr>
+          </table>
+        </div>
+        
+        @if (dataSource.data.length === 0) {
+          <div class="empty-state">
+            <div class="icon-wrapper">
+              <mat-icon>inbox</mat-icon>
+            </div>
+            <h3>No se encontraron tickets</h3>
+            <p>Actualmente no hay solicitudes pendientes en tu cuenta.</p>
+            <button mat-stroked-button style="border-radius: 12px; font-weight: 700;" (click)="openCreateDialog()">Crear Primer Ticket</button>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Footer Info -->
+    <footer class="dashboard-footer">
+      <span>Versión 2.0.5 - Alpha Elite</span>
+      <span>© 2026 Premium Support System</span>
+    </footer>
+  </div>
+</div>
+
+<style>
+  @media (max-width: 768px) {
+    .hidden-mobile { display: none !important; }
+  }
+</style>

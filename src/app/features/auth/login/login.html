@@ -1,0 +1,73 @@
+<div class="login-container">
+  <!-- Animated Background Elements -->
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Main Card -->
+  <mat-card class="glass-card">
+    <div class="top-bar"></div>
+    
+    <div class="login-content">
+      <!-- Header -->
+      <div class="logo-wrapper">
+        <div class="logo-circle">
+          <mat-icon class="logo-icon">confirmation_number</mat-icon>
+        </div>
+      </div>
+
+      <header class="login-header">
+        <h1 class="login-title">
+          Portal <span class="text-gradient">Alpha</span>
+        </h1>
+        <p class="login-subtitle">Gestión inteligente de incidencias</p>
+      </header>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <label class="field-label">Email Corporativo</label>
+          <mat-form-field appearance="outline" class="premium-field">
+            <mat-icon matPrefix>alternate_email</mat-icon>
+            <input matInput formControlName="email" type="email" placeholder="nombre@empresa.com">
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Requerido</mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Email inválido</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem;">
+            <label class="field-label">Contraseña</label>
+            <a href="#" style="font-size: 10px; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none;">¿Olvidaste tu clave?</a>
+          </div>
+          <mat-form-field appearance="outline" class="premium-field">
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput formControlName="password" type="password" placeholder="••••••••">
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Requerido</mat-error>
+          </mat-form-field>
+        </div>
+
+        <button mat-flat-button class="submit-button" type="submit" [disabled]="loginForm.invalid || isLoading">
+          <div class="btn-shine"></div>
+          <span style="display: flex; align-items: center; gap: 12px; justify-content: center;">
+            @if (isLoading) {
+              <mat-icon class="animate-spin">autorenew</mat-icon> Verificando...
+            } @else {
+              Acceder al Sistema <mat-icon>arrow_forward</mat-icon>
+            }
+          </span>
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <p class="footer-text">¿No tienes acceso todavía?</p>
+        <a routerLink="/register" class="register-link">
+          Solicitar una cuenta
+        </a>
+      </div>
+    </div>
+  </mat-card>
+</div>
