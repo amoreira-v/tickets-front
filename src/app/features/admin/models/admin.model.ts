@@ -18,6 +18,16 @@ export interface Option {
   path: string;
 }
 
+export interface ProfileOption {
+  id: string | number;
+  profile_id: string | number;
+  option_id: string | number;
+}
+
+export interface CrudPayload<T> {
+  data: Partial<T>;
+}
+
 export interface AdminDataResponse<T> {
   status: string;
   data: T[];

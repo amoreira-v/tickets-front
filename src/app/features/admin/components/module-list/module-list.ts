@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { AdminService } from '../../services/admin.service';
 import { Module } from '../../models/admin.model';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-module-list',
@@ -15,13 +16,17 @@ import { Module } from '../../models/admin.model';
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
       <div class="p-4 flex justify-between items-center border-b border-gray-100">
         <h2 class="text-lg font-semibold text-gray-800">Módulos del Sistema</h2>
-        <button mat-flat-button color="primary">
+        <button mat-flat-button color="primary" (click)="createModule()">
           <mat-icon>add</mat-icon> Nuevo Módulo
         </button>
       </div>
 
       @if (isLoading()) {
-        <div class="p-8 text-center text-gray-500">Cargando módulos...</div>
+        <div class="p-6 grid gap-3">
+          @for (line of [1, 2, 3, 4]; track line) {
+            <div class="h-11 rounded-xl bg-slate-100 shimmer"></div>
+          }
+        </div>
       } @else {
         <table mat-table [dataSource]="dataSource" class="w-full">
           <ng-container matColumnDef="id">
@@ -55,8 +60,8 @@ import { Module } from '../../models/admin.model';
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="text-right uppercase text-xs font-semibold text-gray-500"> Acciones </th>
             <td mat-cell *matCellDef="let element" class="text-right">
-              <button mat-icon-button color="accent"><mat-icon>edit</mat-icon></button>
-              <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
+              <button mat-icon-button color="accent" (click)="editModule(element)"><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button color="warn" (click)="deleteModule(element)"><mat-icon>delete</mat-icon></button>
             </td>
           </ng-container>
 
@@ -69,19 +74,78 @@ import { Module } from '../../models/admin.model';
 })
 export class ModuleList implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly toast = inject(ToastService);
   
   public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Module>([]);
   displayedColumns: string[] = ['id', 'icon', 'name', 'is_active', 'actions'];
 
   ngOnInit() {
+    this.loadModules();
+  }
+
+  loadModules(): void {
     this.isLoading.set(true);
     this.adminService.getModules().subscribe({
       next: (res) => {
         this.dataSource.data = res.data;
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false)
+      error: () => {
+        this.toast.error('No fue posible cargar modulos');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  createModule(): void {
+    const name = window.prompt('Nombre del modulo:')?.trim();
+    if (!name) {
+      return;
+    }
+
+    const icon = window.prompt('Icono Material del modulo:', 'view_module')?.trim() || 'view_module';
+    const isActive = window.confirm('El modulo estara activo?');
+
+    this.adminService.createModule({ name, icon, is_active: isActive }).subscribe({
+      next: () => {
+        this.toast.success('Modulo creado');
+        this.loadModules();
+      },
+      error: () => this.toast.error('No fue posible crear el modulo')
+    });
+  }
+
+  editModule(module: Module): void {
+    const name = window.prompt('Editar nombre del modulo:', module.name)?.trim();
+    if (!name) {
+      return;
+    }
+
+    const icon = window.prompt('Editar icono Material:', module.icon)?.trim() || module.icon;
+    const isActive = window.confirm('Marcar modulo como activo?');
+
+    this.adminService.updateModule(module.id, { name, icon, is_active: isActive }).subscribe({
+      next: () => {
+        this.toast.success('Modulo actualizado');
+        this.loadModules();
+      },
+      error: () => this.toast.error('No fue posible actualizar el modulo')
+    });
+  }
+
+  deleteModule(module: Module): void {
+    const confirmed = window.confirm(`Eliminar el modulo ${module.name}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.adminService.deleteModule(module.id).subscribe({
+      next: () => {
+        this.toast.success('Modulo eliminado');
+        this.loadModules();
+      },
+      error: () => this.toast.error('No fue posible eliminar el modulo')
     });
   }
 }

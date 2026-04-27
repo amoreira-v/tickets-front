@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminService } from '../../services/admin.service';
 import { Option } from '../../models/admin.model';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-option-list',
@@ -14,13 +15,17 @@ import { Option } from '../../models/admin.model';
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
       <div class="p-4 flex justify-between items-center border-b border-gray-100">
         <h2 class="text-lg font-semibold text-gray-800">Opciones de Menú</h2>
-        <button mat-flat-button color="primary">
+        <button mat-flat-button color="primary" (click)="createOption()">
           <mat-icon>add</mat-icon> Nueva Opción
         </button>
       </div>
 
       @if (isLoading()) {
-        <div class="p-8 text-center text-gray-500">Cargando opciones...</div>
+        <div class="p-6 grid gap-3">
+          @for (line of [1, 2, 3, 4]; track line) {
+            <div class="h-11 rounded-xl bg-slate-100 shimmer"></div>
+          }
+        </div>
       } @else {
         <table mat-table [dataSource]="dataSource" class="w-full">
           <ng-container matColumnDef="id">
@@ -46,8 +51,8 @@ import { Option } from '../../models/admin.model';
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="text-right uppercase text-xs font-semibold text-gray-500"> Acciones </th>
             <td mat-cell *matCellDef="let element" class="text-right">
-              <button mat-icon-button color="accent"><mat-icon>edit</mat-icon></button>
-              <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
+              <button mat-icon-button color="accent" (click)="editOption(element)"><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button color="warn" (click)="deleteOption(element)"><mat-icon>delete</mat-icon></button>
             </td>
           </ng-container>
 
@@ -60,19 +65,86 @@ import { Option } from '../../models/admin.model';
 })
 export class OptionList implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly toast = inject(ToastService);
   
   public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Option>([]);
   displayedColumns: string[] = ['id', 'name', 'path', 'module_id', 'actions'];
 
   ngOnInit() {
+    this.loadOptions();
+  }
+
+  loadOptions(): void {
     this.isLoading.set(true);
     this.adminService.getOptions().subscribe({
       next: (res) => {
         this.dataSource.data = res.data;
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false)
+      error: () => {
+        this.toast.error('No fue posible cargar opciones');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  createOption(): void {
+    const name = window.prompt('Nombre de la opcion de menu:')?.trim();
+    if (!name) {
+      return;
+    }
+
+    const path = window.prompt('Ruta de navegacion (ej: /tickets):', '/tickets')?.trim();
+    if (!path) {
+      return;
+    }
+
+    const moduleId = window.prompt('ID de modulo relacionado:', 'M-1')?.trim() || 'M-1';
+
+    this.adminService.createOption({ name, path, module_id: moduleId }).subscribe({
+      next: () => {
+        this.toast.success('Opcion creada');
+        this.loadOptions();
+      },
+      error: () => this.toast.error('No fue posible crear la opcion')
+    });
+  }
+
+  editOption(option: Option): void {
+    const name = window.prompt('Editar nombre de la opcion:', option.name)?.trim();
+    if (!name) {
+      return;
+    }
+
+    const path = window.prompt('Editar ruta:', option.path)?.trim();
+    if (!path) {
+      return;
+    }
+
+    const moduleId = window.prompt('Editar ID de modulo:', String(option.module_id))?.trim() || String(option.module_id);
+
+    this.adminService.updateOption(option.id, { name, path, module_id: moduleId }).subscribe({
+      next: () => {
+        this.toast.success('Opcion actualizada');
+        this.loadOptions();
+      },
+      error: () => this.toast.error('No fue posible actualizar la opcion')
+    });
+  }
+
+  deleteOption(option: Option): void {
+    const confirmed = window.confirm(`Eliminar la opcion ${option.name}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.adminService.deleteOption(option.id).subscribe({
+      next: () => {
+        this.toast.success('Opcion eliminada');
+        this.loadOptions();
+      },
+      error: () => this.toast.error('No fue posible eliminar la opcion')
     });
   }
 }

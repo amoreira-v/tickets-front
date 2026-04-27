@@ -27,10 +27,10 @@ import { Ticket, TicketStatus } from '../../models/ticket.model';
         <div class="icon-box">
           <mat-icon>confirmation_number</mat-icon>
         </div>
-        <h2>Expediente #{{ ticket.id.substring(0,8) }}</h2>
+        <h2>Expediente #{{ formatTicketId(ticket.id) }}</h2>
       </div>
       <span class="status-pill" [ngClass]="getStatusClass(ticket.status)">
-        {{ ticket.status }}
+        {{ getStatusLabel(ticket.status) }}
       </span>
     </div>
 
@@ -68,7 +68,7 @@ import { Ticket, TicketStatus } from '../../models/ticket.model';
       @if (authService.role() === 'SUPPORT' || authService.role() === 'ADMIN') {
         @if (ticket.status === 'OPEN') {
           <button mat-flat-button class="btn-action btn-atender" (click)="updateStatus('IN_PROGRESS')" [disabled]="isSubmitting">
-            <mat-icon>play_arrow</mat-icon> Atender
+            <mat-icon>play_arrow</mat-icon> Atendiendo
           </button>
           <button mat-stroked-button class="btn-action btn-rechazar" (click)="updateStatus('REJECTED')" [disabled]="isSubmitting">
             <mat-icon>block</mat-icon> Rechazar
@@ -76,7 +76,7 @@ import { Ticket, TicketStatus } from '../../models/ticket.model';
         }
         @if (ticket.status === 'IN_PROGRESS') {
           <button mat-flat-button class="btn-action btn-finalizar" (click)="updateStatus('RESOLVED')" [disabled]="isSubmitting">
-            <mat-icon>check_circle</mat-icon> Finalizar
+            <mat-icon>check_circle</mat-icon> Atendido
           </button>
         }
       }
@@ -102,6 +102,20 @@ export class TicketDetail {
       case 'REJECTED': return 'status-rejected';
       default: return '';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    switch(status) {
+      case 'OPEN': return 'Abierto';
+      case 'IN_PROGRESS': return 'Atendiendo';
+      case 'RESOLVED': return 'Atendido';
+      case 'REJECTED': return 'Rechazado';
+      default: return status;
+    }
+  }
+
+  formatTicketId(id: string | number): string {
+    return String(id).substring(0, 8);
   }
 
   updateStatus(newStatus: TicketStatus) {

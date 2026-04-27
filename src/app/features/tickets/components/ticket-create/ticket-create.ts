@@ -40,9 +40,12 @@ import { ToastService } from '../../../../core/services/toast.service';
         <div class="form-grid">
           <mat-form-field appearance="outline">
             <mat-label>Título del Requerimiento</mat-label>
-            <input matInput formControlName="title" placeholder="Ej. Acceso denegado a base de datos">
+            <input matInput formControlName="title" maxlength="90" placeholder="Ej. Acceso denegado a base de datos">
             <mat-icon matSuffix class="text-slate-400">title</mat-icon>
             <mat-error *ngIf="ticketForm.get('title')?.hasError('required')">El título es obligatorio</mat-error>
+            <mat-error *ngIf="ticketForm.get('title')?.hasError('minlength')">Debe tener al menos 8 caracteres</mat-error>
+            <mat-error *ngIf="ticketForm.get('title')?.hasError('maxlength')">No puede exceder 90 caracteres</mat-error>
+            <mat-hint align="end">{{ ticketForm.get('title')?.value?.length || 0 }}/90</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -64,8 +67,11 @@ import { ToastService } from '../../../../core/services/toast.service';
 
         <mat-form-field appearance="outline">
           <mat-label>Descripción Detallada</mat-label>
-          <textarea matInput formControlName="description" rows="5" placeholder="Describa el problema lo más detallado posible..."></textarea>
+          <textarea matInput formControlName="description" rows="5" maxlength="600" placeholder="Describa el problema lo más detallado posible..."></textarea>
           <mat-error *ngIf="ticketForm.get('description')?.hasError('required')">La descripción es necesaria para procesar su ticket</mat-error>
+          <mat-error *ngIf="ticketForm.get('description')?.hasError('minlength')">Debe tener al menos 20 caracteres</mat-error>
+          <mat-error *ngIf="ticketForm.get('description')?.hasError('maxlength')">No puede exceder 600 caracteres</mat-error>
+          <mat-hint align="end">{{ ticketForm.get('description')?.value?.length || 0 }}/600</mat-hint>
         </mat-form-field>
 
       </form>
@@ -93,9 +99,9 @@ export class TicketCreate {
   isSubmitting = false;
 
   ticketForm = this.fb.nonNullable.group({
-    title: ['', [Validators.required, Validators.minLength(5)]],
+    title: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(90)]],
     priority: ['LOW', Validators.required],
-    description: ['', Validators.required]
+    description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(600)]]
   });
 
   onSubmit() {
@@ -104,13 +110,18 @@ export class TicketCreate {
       this.ticketService.createTicket(this.ticketForm.getRawValue()).subscribe({
         next: (newTicket) => {
           this.isSubmitting = false;
+          this.toast.success('Ticket creado correctamente');
           this.dialogRef.close(newTicket);
         },
         error: () => {
           this.isSubmitting = false;
+          this.toast.error('No fue posible crear el ticket');
         }
       });
+      return;
     }
+
+    this.ticketForm.markAllAsTouched();
   }
 
   close() {

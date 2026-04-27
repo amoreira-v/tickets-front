@@ -51,7 +51,8 @@ export class Register {
   onSubmit(): void {
     if (this.registerForm.valid) {
       this.isLoading = true;
-      this.authService.register(this.registerForm.value).subscribe({
+      const { name, email, password } = this.registerForm.getRawValue();
+      this.authService.register({ name, email, password }).subscribe({
         next: () => {
           this.isLoading = false;
           this.router.navigate(['/tickets']);

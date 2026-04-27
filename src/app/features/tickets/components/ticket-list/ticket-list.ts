@@ -12,6 +12,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { Ticket } from '../../models/ticket.model';
 import { TicketCreate } from '../ticket-create/ticket-create';
 import { TicketDetail } from '../ticket-detail/ticket-detail';
+import { ToastService } from '../../../../core/services/toast.service';
 
 import { RouterModule } from '@angular/router';
 
@@ -36,6 +37,7 @@ export class TicketList implements OnInit {
   private readonly ticketService = inject(TicketService);
   public readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
+  private readonly toast = inject(ToastService);
 
   public readonly isLoading = signal<boolean>(true);
   public readonly dataSource = new MatTableDataSource<Ticket>([]);
@@ -62,13 +64,15 @@ export class TicketList implements OnInit {
 
   loadTickets(): void {
     this.isLoading.set(true);
-    this.ticketService.getTickets().subscribe({
+    const scope = this.authService.role() === 'SUPPORT' || this.authService.role() === 'ADMIN' ? 'all' : 'mine';
+
+    this.ticketService.getTickets(scope).subscribe({
       next: (response) => {
         this.dataSource.data = response.data;
         this.isLoading.set(false);
       },
-      error: (err) => {
-        console.error('Error fetching tickets', err);
+      error: () => {
+        this.toast.error('No fue posible cargar la lista de tickets');
         this.isLoading.set(false);
       }
     });
@@ -110,6 +114,31 @@ export class TicketList implements OnInit {
       case 'REJECTED': return 'status-rejected';
       default: return '';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    switch(status) {
+      case 'OPEN': return 'Abierto';
+      case 'IN_PROGRESS': return 'Atendiendo';
+      case 'RESOLVED': return 'Atendido';
+      case 'REJECTED': return 'Rechazado';
+      default: return status;
+    }
+  }
+
+  getRoleLabel(): string {
+    const role = this.authService.role();
+    if (role === 'SUPPORT') {
+      return 'SOPORTE';
+    }
+    if (role === 'CLIENT') {
+      return 'CLIENTE';
+    }
+    return 'ADMIN';
+  }
+
+  formatTicketId(id: string | number): string {
+    return String(id).substring(0, 8);
   }
 
   getPriorityClass(priority: string): string {

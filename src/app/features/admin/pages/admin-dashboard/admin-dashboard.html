@@ -7,7 +7,7 @@
         <nav class="breadcrumb">
           <span>Administración</span>
           <mat-icon>chevron_right</mat-icon>
-          <span class="active">Backoffice</span>
+          <span class="active">Administración</span>
         </nav>
         <h1 class="main-title">
           Control de <span class="text-gradient">Configuración</span>
@@ -76,7 +76,7 @@
         </div>
         <div class="stat-info">
           <p class="label">Seguridad</p>
-          <p class="value">Nivel: {{ authService.role() }}</p>
+          <p class="value">Nivel: {{ roleLabel() }}</p>
         </div>
       </div>
       

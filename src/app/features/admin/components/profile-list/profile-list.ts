@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminService } from '../../services/admin.service';
 import { Profile } from '../../models/admin.model';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-profile-list',
@@ -14,13 +15,17 @@ import { Profile } from '../../models/admin.model';
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
       <div class="p-4 flex justify-between items-center border-b border-gray-100">
         <h2 class="text-lg font-semibold text-gray-800">Perfiles Registrados</h2>
-        <button mat-flat-button color="primary">
+        <button mat-flat-button color="primary" (click)="createProfile()">
           <mat-icon>add</mat-icon> Nuevo Perfil
         </button>
       </div>
 
       @if (isLoading()) {
-        <div class="p-8 text-center text-gray-500">Cargando perfiles...</div>
+        <div class="p-6 grid gap-3">
+          @for (line of [1, 2, 3, 4]; track line) {
+            <div class="h-11 rounded-xl bg-slate-100 shimmer"></div>
+          }
+        </div>
       } @else {
         <table mat-table [dataSource]="dataSource" class="w-full">
           <ng-container matColumnDef="id">
@@ -41,8 +46,8 @@ import { Profile } from '../../models/admin.model';
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef class="text-right uppercase text-xs font-semibold text-gray-500"> Acciones </th>
             <td mat-cell *matCellDef="let element" class="text-right">
-              <button mat-icon-button color="accent"><mat-icon>edit</mat-icon></button>
-              <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
+              <button mat-icon-button color="accent" (click)="editProfile(element)"><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button color="warn" (click)="deleteProfile(element)"><mat-icon>delete</mat-icon></button>
             </td>
           </ng-container>
 
@@ -55,19 +60,74 @@ import { Profile } from '../../models/admin.model';
 })
 export class ProfileList implements OnInit {
   private readonly adminService = inject(AdminService);
+  private readonly toast = inject(ToastService);
   
   public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Profile>([]);
   displayedColumns: string[] = ['id', 'name', 'description', 'actions'];
 
   ngOnInit() {
+    this.loadProfiles();
+  }
+
+  loadProfiles(): void {
     this.isLoading.set(true);
     this.adminService.getProfiles().subscribe({
       next: (res) => {
         this.dataSource.data = res.data;
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false)
+      error: () => {
+        this.toast.error('No fue posible cargar perfiles');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  createProfile(): void {
+    const name = window.prompt('Nombre del perfil (ADMIN, SOPORTE, CLIENTE):')?.trim();
+    if (!name) {
+      return;
+    }
+
+    const description = window.prompt('Descripcion corta del perfil:')?.trim() || '';
+    this.adminService.createProfile({ name, description }).subscribe({
+      next: () => {
+        this.toast.success('Perfil creado');
+        this.loadProfiles();
+      },
+      error: () => this.toast.error('No fue posible crear el perfil')
+    });
+  }
+
+  editProfile(profile: Profile): void {
+    const name = window.prompt('Editar nombre del perfil:', profile.name)?.trim();
+    if (!name) {
+      return;
+    }
+
+    const description = window.prompt('Editar descripcion:', profile.description)?.trim() || '';
+    this.adminService.updateProfile(profile.id, { name, description }).subscribe({
+      next: () => {
+        this.toast.success('Perfil actualizado');
+        this.loadProfiles();
+      },
+      error: () => this.toast.error('No fue posible actualizar el perfil')
+    });
+  }
+
+  deleteProfile(profile: Profile): void {
+    const confirmed = window.confirm(`Eliminar el perfil ${profile.name}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.adminService.deleteProfile(profile.id).subscribe({
+      next: () => {
+        this.toast.success('Perfil eliminado');
+        this.loadProfiles();
+      },
+      error: () => this.toast.error('No fue posible eliminar el perfil')
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,13 +17,19 @@ import { AuthService } from '../../../core/services/auth.service';
       <!-- Navigation -->
       <nav class="nav-container">
         <p class="nav-label">Menú Principal</p>
-        @for (item of authService.userFunctions(); track item.path) {
-          <a [routerLink]="item.path"
-             routerLinkActive="active-item"
-             class="nav-link-item">
-            <mat-icon>{{item.icon}}</mat-icon>
-            <span class="font-bold">{{item.name}}</span>
-          </a>
+        @if (isHydratingMenu()) {
+          <div class="empty-nav-state">Cargando opciones del perfil...</div>
+        } @else if (authService.userFunctions().length === 0) {
+          <div class="empty-nav-state">Sin opciones asignadas para este perfil.</div>
+        } @else {
+          @for (item of authService.userFunctions(); track item.path) {
+            <a [routerLink]="item.path"
+               routerLinkActive="active-item"
+               class="nav-link-item">
+              <mat-icon>{{item.icon}}</mat-icon>
+              <span class="font-bold">{{item.name}}</span>
+            </a>
+          }
         }
       </nav>
     </aside>
@@ -72,10 +78,31 @@ import { AuthService } from '../../../core/services/auth.service';
         box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
       }
     }
+    .empty-nav-state {
+      padding: 0.85rem 1rem;
+      border-radius: 0.85rem;
+      background: rgba(148, 163, 184, 0.12);
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
   `]
 })
-export class Sidebar {
+export class Sidebar implements OnInit {
   authService = inject(AuthService);
+  readonly isHydratingMenu = signal(false);
+
+  ngOnInit(): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+
+    this.isHydratingMenu.set(true);
+    this.authService.ensureMenuOptionsLoaded().subscribe({
+      next: () => this.isHydratingMenu.set(false),
+      error: () => this.isHydratingMenu.set(false)
+    });
+  }
 
   logout() {
     this.authService.logout();

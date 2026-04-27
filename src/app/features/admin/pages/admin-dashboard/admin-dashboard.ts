@@ -28,6 +28,17 @@ import { AuthService } from '../../../../core/services/auth.service';
 export class AdminDashboard {
   public readonly authService = inject(AuthService);
 
+  roleLabel(): string {
+    const role = this.authService.role();
+    if (role === 'SUPPORT') {
+      return 'SOPORTE';
+    }
+    if (role === 'CLIENT') {
+      return 'CLIENTE';
+    }
+    return 'ADMIN';
+  }
+
   logout(): void {
     this.authService.logout();
   }

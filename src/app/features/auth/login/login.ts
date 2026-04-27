@@ -40,7 +40,7 @@ export class Login {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading = true;
-      this.authService.login(this.loginForm.value).subscribe({
+      this.authService.login(this.loginForm.getRawValue()).subscribe({
         next: () => {
           this.isLoading = false;
           this.router.navigate(['/tickets']);

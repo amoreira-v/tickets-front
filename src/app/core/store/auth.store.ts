@@ -30,7 +30,7 @@ export class AuthStore {
   // Selectores Reactivos (Signals Computadas)
   public readonly isAuthenticated = computed(() => !!this.state().token);
   public readonly currentUser = computed(() => this.state().user);
-  public readonly userFunctions = computed(() => this.state().functions);
+  public readonly userFunctions = computed(() => this.state().functions ?? []);
   public readonly userRole = computed(() => this.state().user?.role);
   public readonly token = computed(() => this.state().token);
 
@@ -64,7 +64,12 @@ export class AuthStore {
     const stored = localStorage.getItem('auth_state');
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored) as Partial<AuthState> & { funciones?: UserFunction[] };
+        return {
+          token: parsed.token ?? null,
+          user: parsed.user ?? null,
+          functions: parsed.functions ?? parsed.funciones ?? []
+        };
       } catch (e) {
         console.error('Error parsing auth state from localStorage', e);
       }

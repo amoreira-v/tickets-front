@@ -131,3 +131,24 @@ body {
   background-color: #f8fafc !important;
 }
 
+.mat-mdc-snack-bar-container.toast-success {
+  --mdc-snackbar-container-color: #ecfdf5;
+  --mdc-snackbar-supporting-text-color: #065f46;
+  --mat-snack-bar-button-color: #047857;
+  border-left: 4px solid #10b981;
+}
+
+.mat-mdc-snack-bar-container.toast-error {
+  --mdc-snackbar-container-color: #fef2f2;
+  --mdc-snackbar-supporting-text-color: #991b1b;
+  --mat-snack-bar-button-color: #dc2626;
+  border-left: 4px solid #ef4444;
+}
+
+.mat-mdc-snack-bar-container.toast-info {
+  --mdc-snackbar-container-color: #eff6ff;
+  --mdc-snackbar-supporting-text-color: #1e40af;
+  --mat-snack-bar-button-color: #2563eb;
+  border-left: 4px solid #3b82f6;
+}
+
