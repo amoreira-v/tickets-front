@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.modal-header {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: -24px -24px 0 -24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  .icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    
+    mat-icon {
+      color: #818cf8;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .header-text {
+    h2 {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+.form-container {
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  
+  @media (min-width: 640px) {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container {
+    border-radius: 24px !important;
+    overflow: hidden !important;
+  }
+  
+  .mat-mdc-form-field {
+    width: 100%;
+    
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #e2e8f0 !important;
+      border-width: 1.5px !important;
+    }
+    
+    &.mat-focused {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #6366f1 !important;
+      }
+    }
+  }
+
+  .mat-mdc-dialog-actions {
+    padding: 1rem 2rem 2rem 2rem !important;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+  }
+}
+
+.btn-cancel {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  color: #64748b !important;
+  height: 48px !important;
+  padding: 0 1.5rem !important;
+}
+
+.btn-submit {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  background: #6366f1 !important;
+  color: white !important;
+  height: 48px !important;
+  padding: 0 2rem !important;
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3) !important;
+  
+  &:disabled {
+    opacity: 0.6 !important;
+    background: #94a3b8 !important;
+  }
+}

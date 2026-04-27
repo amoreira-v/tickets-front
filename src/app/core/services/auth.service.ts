@@ -14,13 +14,13 @@ interface ApiResponse<T> {
 
 interface AuthData {
   token: string;
-  user?: { 
+  user: { 
+    id: string;
     name: string; 
     email: string; 
-    role: UserRole 
+    profile: UserRole;
+    funciones: UserFunction[];
   };
-  role?: UserRole; // Fallback
-  functions?: UserFunction[];
 }
 
 @Injectable({
@@ -51,12 +51,14 @@ export class AuthService {
     return this.http.post<ApiResponse<AuthData>>(`${this.apiUrl}/auth/login`, credentials).pipe(
       map(res => {
         const token = res.data.token;
-        const user = res.data.user || { 
-          name: 'Usuario', 
-          email: credentials.email || '', 
-          role: res.data.role || 'CLIENT' 
+        const userData = res.data.user;
+        
+        const user = { 
+          name: userData.name, 
+          email: userData.email, 
+          role: userData.profile 
         };
-        const functions = res.data.functions || [];
+        const functions = userData.funciones || [];
         
         return { token, user, functions };
       }),
@@ -71,12 +73,14 @@ export class AuthService {
     return this.http.post<ApiResponse<AuthData>>(`${this.apiUrl}/auth/register`, data).pipe(
       map(res => {
         const token = res.data.token;
-        const user = res.data.user || { 
-          name: data.name || 'Nuevo Usuario', 
-          email: data.email || '', 
-          role: res.data.role || 'CLIENT' 
+        const userData = res.data.user;
+        
+        const user = { 
+          name: userData?.name || data.name, 
+          email: userData?.email || data.email, 
+          role: userData?.profile || 'CLIENT' 
         };
-        const functions = res.data.functions || [];
+        const functions = userData?.funciones || [];
         
         return { token, user, functions };
       }),

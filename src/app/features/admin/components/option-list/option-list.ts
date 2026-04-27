@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +19,7 @@ import { Option } from '../../models/admin.model';
         </button>
       </div>
 
-      @if (loading) {
+      @if (isLoading()) {
         <div class="p-8 text-center text-gray-500">Cargando opciones...</div>
       } @else {
         <table mat-table [dataSource]="dataSource" class="w-full">
@@ -61,17 +61,18 @@ import { Option } from '../../models/admin.model';
 export class OptionList implements OnInit {
   private readonly adminService = inject(AdminService);
   
-  loading = true;
+  public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Option>([]);
   displayedColumns: string[] = ['id', 'name', 'path', 'module_id', 'actions'];
 
   ngOnInit() {
+    this.isLoading.set(true);
     this.adminService.getOptions().subscribe({
       next: (res) => {
         this.dataSource.data = res.data;
-        this.loading = false;
+        this.isLoading.set(false);
       },
-      error: () => this.loading = false
+      error: () => this.isLoading.set(false)
     });
   }
 }

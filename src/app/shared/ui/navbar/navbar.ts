@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../core/services/auth.service';
+import { UiService } from '../../../core/services/ui.service';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +24,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class Navbar {
   authService = inject(AuthService);
+  uiService = inject(UiService);
 
   logout() {
     this.authService.logout();

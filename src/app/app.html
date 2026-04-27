@@ -1,13 +1,1 @@
-<div class="min-h-screen bg-slate-50 flex flex-col">
-  @if (authService.isAuthenticated()) {
-    <app-navbar class="w-full"></app-navbar>
-    <main class="flex-1 overflow-y-auto">
-      <router-outlet />
-    </main>
-  } @else {
-    <main class="flex-1">
-      <router-outlet />
-    </main>
-  }
-</div>
-
+<router-outlet />

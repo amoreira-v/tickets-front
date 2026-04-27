@@ -3,13 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { AuthService } from './core/services/auth.service';
-import { Navbar } from './shared/ui/navbar/navbar';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Navbar, CommonModule],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

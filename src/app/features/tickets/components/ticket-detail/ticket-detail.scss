@@ -1,0 +1,116 @@
+.detail-header {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: -24px -24px 0 -24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    .icon-box {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      mat-icon { color: #94a3b8; font-size: 20px; width: 20px; height: 20px; }
+    }
+    
+    h2 { margin: 0; font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; }
+  }
+
+  .status-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    &.status-open { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+    &.status-progress { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    &.status-resolved { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    &.status-rejected { background: rgba(244, 63, 94, 0.2); color: #fb7185; }
+  }
+}
+
+.detail-content {
+  padding: 2rem 0;
+}
+
+.info-section {
+  margin-bottom: 2rem;
+  
+  .label {
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .title-text {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  
+  .description-box {
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    color: #475569;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  background: #fcfcfd;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px dashed #e2e8f0;
+}
+
+.meta-item {
+  .val { font-weight: 800; color: #1e293b; font-size: 1rem; }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-actions {
+    padding: 1.5rem 2rem 2rem 2rem !important;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    gap: 0.75rem;
+  }
+}
+
+.btn-action {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  height: 44px !important;
+  padding: 0 1.25rem !important;
+  
+  mat-icon { margin-right: 8px; font-size: 18px; width: 18px; height: 18px; }
+  
+  &.btn-atender { background: #6366f1 !important; color: white !important; }
+  &.btn-finalizar { background: #10b981 !important; color: white !important; }
+  &.btn-rechazar { background: #f43f5e !important; color: white !important; }
+}

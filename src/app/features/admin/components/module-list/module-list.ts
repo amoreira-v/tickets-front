@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,7 +20,7 @@ import { Module } from '../../models/admin.model';
         </button>
       </div>
 
-      @if (loading) {
+      @if (isLoading()) {
         <div class="p-8 text-center text-gray-500">Cargando módulos...</div>
       } @else {
         <table mat-table [dataSource]="dataSource" class="w-full">
@@ -70,17 +70,18 @@ import { Module } from '../../models/admin.model';
 export class ModuleList implements OnInit {
   private readonly adminService = inject(AdminService);
   
-  loading = true;
+  public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Module>([]);
   displayedColumns: string[] = ['id', 'icon', 'name', 'is_active', 'actions'];
 
   ngOnInit() {
+    this.isLoading.set(true);
     this.adminService.getModules().subscribe({
       next: (res) => {
         this.dataSource.data = res.data;
-        this.loading = false;
+        this.isLoading.set(false);
       },
-      error: () => this.loading = false
+      error: () => this.isLoading.set(false)
     });
   }
 }

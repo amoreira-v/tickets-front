@@ -10,53 +10,69 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule],
   template: `
-    <aside class="w-20 md:w-64 h-screen bg-slate-900 border-r border-white/5 flex flex-col transition-all duration-500 overflow-hidden relative group">
+    <aside class="sidebar-inner">
       <!-- Glow Effect -->
-      <div class="absolute top-0 left-0 w-full h-32 bg-brand-primary/10 blur-[80px] -z-10"></div>
+      <div class="absolute top-0 left-0 w-full h-32 bg-indigo-500/10 blur-[80px] -z-10"></div>
       
-      <!-- Brand Logo -->
-      <div class="p-6 mb-8 flex items-center gap-4">
-        <div class="w-10 h-10 bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
-          <mat-icon class="text-white">confirmation_number</mat-icon>
-        </div>
-        <span class="text-xl font-display font-black text-white tracking-tight hidden md:block">
-          Alpha<span class="text-brand-primary">Tickets</span>
-        </span>
-      </div>
-
       <!-- Navigation -->
-      <nav class="flex-1 px-4 space-y-2">
+      <nav class="nav-container">
+        <p class="nav-label">Menú Principal</p>
         @for (item of authService.userFunctions(); track item.path) {
           <a [routerLink]="item.path"
-             routerLinkActive="bg-brand-primary/10 text-brand-primary shadow-[inset_4px_0_0_0_#6366f1]"
-             class="flex items-center gap-4 p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group/item">
-            <mat-icon class="group-hover/item:scale-110 transition-transform">{{item.icon}}</mat-icon>
-            <span class="font-bold text-sm tracking-tight hidden md:block">{{item.name}}</span>
+             routerLinkActive="active-item"
+             class="nav-link-item">
+            <mat-icon>{{item.icon}}</mat-icon>
+            <span class="font-bold">{{item.name}}</span>
           </a>
         }
       </nav>
-
-      <!-- User Profile -->
-      <div class="p-4 border-t border-white/5 bg-slate-950/50 backdrop-blur-md">
-        <div class="flex items-center gap-3 p-2">
-          <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-brand-secondary font-black">
-            {{ (authService.currentUser()?.name || 'U').substring(0,1) }}
-          </div>
-          <div class="hidden md:block overflow-hidden">
-            <p class="text-xs font-black text-white truncate">{{ authService.currentUser()?.name || 'Usuario' }}</p>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ authService.role() }}</p>
-          </div>
-        </div>
-        
-        <button mat-button 
-                (click)="logout()" 
-                class="w-full !mt-4 !text-slate-500 hover:!text-rose-400 !justify-start !px-3">
-          <mat-icon class="mr-3">logout</mat-icon>
-          <span class="hidden md:block font-bold">Cerrar Sesión</span>
-        </button>
-      </div>
     </aside>
-  `
+  `,
+  styles: [`
+    .sidebar-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      color: #94a3b8;
+    }
+    .nav-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .nav-label {
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #475569;
+      margin-bottom: 1rem;
+      padding-left: 0.75rem;
+    }
+    .nav-link-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.3s;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+      }
+      
+      &.active-item {
+        background: #6366f1;
+        color: white;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+      }
+    }
+  `]
 })
 export class Sidebar {
   authService = inject(AuthService);

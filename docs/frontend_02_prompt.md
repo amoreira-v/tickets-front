@@ -1,0 +1,3 @@
+Actúa como un desarrollador Frontend Senior experto en Angular 21. El proyecto base ya está creado.Ahora necesito establecer la capa de datos de la aplicación utilizando Mocks, para no depender del Backend real por ahora. Por favor, genera:1. Las interfaces de TypeScript para la entidad Ticket, basándote exactamente en la estructura del contrato de API proporcionado: id, title, description, status (OPEN, IN_PROGRESS, RESOLVED, REJECTED), priority, user_id, assigned_to, created_at y updated_at.
+2. Un servicio de Angular llamado TicketService que implemente un método getTickets().
+3. Dentro de este servicio, utiliza los datos de ejemplo (JSON) del contrato de la API para devolver un Observable con una lista de tickets simulada.

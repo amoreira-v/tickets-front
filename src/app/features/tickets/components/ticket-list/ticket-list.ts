@@ -1,10 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { TicketService } from '../../services/ticket.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Ticket } from '../../models/ticket.model';
@@ -23,6 +25,8 @@ import { RouterModule } from '@angular/router';
     MatIconModule,
     MatChipsModule,
     MatDialogModule,
+    MatSelectModule,
+    MatFormFieldModule,
     RouterModule
   ],
   templateUrl: './ticket-list.html',
@@ -33,24 +37,39 @@ export class TicketList implements OnInit {
   public readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
 
-  loading = true;
-  dataSource = new MatTableDataSource<Ticket>([]);
+  public readonly isLoading = signal<boolean>(true);
+  public readonly dataSource = new MatTableDataSource<Ticket>([]);
   displayedColumns: string[] = ['id', 'title', 'status', 'priority', 'created_at', 'actions'];
 
   ngOnInit(): void {
     this.loadTickets();
+    
+    // Configurar filtro personalizado para buscar por múltiples campos
+    this.dataSource.filterPredicate = (data: Ticket, filter: string) => {
+      const searchStr = (data.title + data.id + data.status).toLowerCase();
+      return searchStr.indexOf(filter.toLowerCase()) !== -1;
+    };
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  filterByStatus(status: string) {
+    this.dataSource.filter = status.trim().toLowerCase();
   }
 
   loadTickets(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     this.ticketService.getTickets().subscribe({
       next: (response) => {
         this.dataSource.data = response.data;
-        this.loading = false;
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error fetching tickets', err);
-        this.loading = false;
+        this.isLoading.set(false);
       }
     });
   }
