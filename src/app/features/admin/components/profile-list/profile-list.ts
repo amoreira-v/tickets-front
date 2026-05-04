@@ -3,14 +3,16 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
 import { Profile } from '../../models/admin.model';
+import { ProfileForm } from '../profile-form/profile-form';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-profile-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
       <div class="p-4 flex justify-between items-center border-b border-gray-100">
@@ -61,6 +63,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 export class ProfileList implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly toast = inject(ToastService);
+  private readonly dialog = inject(MatDialog);
   
   public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Profile>([]);
@@ -85,34 +88,24 @@ export class ProfileList implements OnInit {
   }
 
   createProfile(): void {
-    const name = window.prompt('Nombre del perfil (ADMIN, SOPORTE, CLIENTE):')?.trim();
-    if (!name) {
-      return;
-    }
+    const dialogRef = this.dialog.open(ProfileForm, {
+      width: '450px',
+      data: {}
+    });
 
-    const description = window.prompt('Descripcion corta del perfil:')?.trim() || '';
-    this.adminService.createProfile({ name, description }).subscribe({
-      next: () => {
-        this.toast.success('Perfil creado');
-        this.loadProfiles();
-      },
-      error: () => this.toast.error('No fue posible crear el perfil')
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadProfiles();
     });
   }
 
   editProfile(profile: Profile): void {
-    const name = window.prompt('Editar nombre del perfil:', profile.name)?.trim();
-    if (!name) {
-      return;
-    }
+    const dialogRef = this.dialog.open(ProfileForm, {
+      width: '450px',
+      data: { profile }
+    });
 
-    const description = window.prompt('Editar descripcion:', profile.description)?.trim() || '';
-    this.adminService.updateProfile(profile.id, { name, description }).subscribe({
-      next: () => {
-        this.toast.success('Perfil actualizado');
-        this.loadProfiles();
-      },
-      error: () => this.toast.error('No fue posible actualizar el perfil')
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadProfiles();
     });
   }
 

@@ -191,18 +191,26 @@ export class AuthService {
   private mapProfileOptions(items: ProfileOptionApiItem[]): UserFunction[] {
     return items
       .filter((item) => !!item.path)
-      .map((item) => ({
-        path: item.path,
-        name: item.option_name || item.name || item.module_name || 'Opcion',
-        icon: item.icon || 'chevron_right'
-      }));
+      .map((item) => {
+        let path = item.path;
+        if (!path.startsWith('/')) {
+          path = '/' + path;
+        }
+        return {
+          path: path,
+          name: item.option_name || item.name || item.module_name || 'Opcion',
+          icon: item.icon || 'chevron_right'
+        };
+      });
   }
 
   private getFallbackFunctionsByRole(role: UserRole): UserFunction[] {
     if (role === 'ADMIN') {
       return [
         { path: '/tickets', name: 'Tickets', icon: 'confirmation_number' },
-        { path: '/admin', name: 'Administracion', icon: 'admin_panel_settings' }
+        { path: '/admin/perfiles', name: 'Perfiles', icon: 'admin_panel_settings' },
+        { path: '/admin/modulos', name: 'Módulos', icon: 'view_module' },
+        { path: '/admin/opciones', name: 'Opciones', icon: 'settings_input_component' }
       ];
     }
 

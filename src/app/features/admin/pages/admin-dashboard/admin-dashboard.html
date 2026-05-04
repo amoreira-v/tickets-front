@@ -27,45 +27,22 @@
     <div class="premium-card">
       <div class="card-top-accent"></div>
       
-      <mat-tab-group animationDuration="600ms" class="premium-tabs">
-        
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <mat-icon>people</mat-icon>
-              <span>Perfiles</span>
-            </div>
-          </ng-template>
-          <div style="padding: 2rem;">
-            <app-profile-list></app-profile-list>
-          </div>
-        </mat-tab>
-
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <mat-icon>view_module</mat-icon>
-              <span>Módulos</span>
-            </div>
-          </ng-template>
-          <div style="padding: 2rem;">
-            <app-module-list></app-module-list>
-          </div>
-        </mat-tab>
-
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <mat-icon>list</mat-icon>
-              <span>Opciones</span>
-            </div>
-          </ng-template>
-          <div style="padding: 2rem;">
-            <app-option-list></app-option-list>
-          </div>
-        </mat-tab>
-
-      </mat-tab-group>
+      <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="premium-tabs">
+        <a mat-tab-link
+           *ngFor="let link of navLinks"
+           [routerLink]="link.path"
+           routerLinkActive #rla="routerLinkActive"
+           [active]="rla.isActive">
+          <mat-icon style="margin-right: 8px;">{{ link.icon }}</mat-icon>
+          {{ link.label }}
+        </a>
+      </nav>
+      
+      <mat-tab-nav-panel #tabPanel>
+        <div style="padding: 2rem;">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-tab-nav-panel>
     </div>
 
     <!-- Stats Grid -->

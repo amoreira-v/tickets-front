@@ -40,7 +40,8 @@ export class AuthStore {
    * Guarda la información del usuario y persiste en localStorage
    */
   public setUser(token: string, user: UserProfile, functions: UserFunction[]): void {
-    const newState: AuthState = { token, user, functions };
+    const normalizedUser = { ...user, role: user.role.toUpperCase() as UserRole };
+    const newState: AuthState = { token, user: normalizedUser, functions };
     
     // Actualizar estado reactivo
     this.state.set(newState);
@@ -65,9 +66,10 @@ export class AuthStore {
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as Partial<AuthState> & { funciones?: UserFunction[] };
+        const user = parsed.user ? { ...parsed.user, role: parsed.user.role.toUpperCase() as UserRole } : null;
         return {
           token: parsed.token ?? null,
-          user: parsed.user ?? null,
+          user,
           functions: parsed.functions ?? parsed.funciones ?? []
         };
       } catch (e) {

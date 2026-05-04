@@ -3,14 +3,16 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
 import { Option } from '../../models/admin.model';
+import { OptionForm } from '../option-form/option-form';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-option-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
       <div class="p-4 flex justify-between items-center border-b border-gray-100">
@@ -66,6 +68,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 export class OptionList implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly toast = inject(ToastService);
+  private readonly dialog = inject(MatDialog);
   
   public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Option>([]);
@@ -90,46 +93,24 @@ export class OptionList implements OnInit {
   }
 
   createOption(): void {
-    const name = window.prompt('Nombre de la opcion de menu:')?.trim();
-    if (!name) {
-      return;
-    }
+    const dialogRef = this.dialog.open(OptionForm, {
+      width: '450px',
+      data: {}
+    });
 
-    const path = window.prompt('Ruta de navegacion (ej: /tickets):', '/tickets')?.trim();
-    if (!path) {
-      return;
-    }
-
-    const moduleId = window.prompt('ID de modulo relacionado:', 'M-1')?.trim() || 'M-1';
-
-    this.adminService.createOption({ name, path, module_id: moduleId }).subscribe({
-      next: () => {
-        this.toast.success('Opcion creada');
-        this.loadOptions();
-      },
-      error: () => this.toast.error('No fue posible crear la opcion')
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadOptions();
     });
   }
 
   editOption(option: Option): void {
-    const name = window.prompt('Editar nombre de la opcion:', option.name)?.trim();
-    if (!name) {
-      return;
-    }
+    const dialogRef = this.dialog.open(OptionForm, {
+      width: '450px',
+      data: { option }
+    });
 
-    const path = window.prompt('Editar ruta:', option.path)?.trim();
-    if (!path) {
-      return;
-    }
-
-    const moduleId = window.prompt('Editar ID de modulo:', String(option.module_id))?.trim() || String(option.module_id);
-
-    this.adminService.updateOption(option.id, { name, path, module_id: moduleId }).subscribe({
-      next: () => {
-        this.toast.success('Opcion actualizada');
-        this.loadOptions();
-      },
-      error: () => this.toast.error('No fue posible actualizar la opcion')
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadOptions();
     });
   }
 

@@ -12,7 +12,14 @@ export const authGuard: CanActivateFn = (route, state) => {
 
     // Permitir acceso si la ruta está en las funciones permitidas
     // Siempre permitir /dashboard o /tickets como base si están logueados
-    const hasPermission = userFunctions.some(f => f.path === targetUrl) || targetUrl === '/dashboard' || targetUrl === '/tickets';
+    // Los administradores siempre pueden entrar a /admin
+    const normalizedTarget = targetUrl.endsWith('/') && targetUrl.length > 1 ? targetUrl.slice(0, -1) : targetUrl;
+    const userRole = authService.role()?.toUpperCase();
+    
+    const hasPermission = userFunctions.some(f => {
+      const fPath = f.path.endsWith('/') && f.path.length > 1 ? f.path.slice(0, -1) : f.path;
+      return fPath === normalizedTarget || normalizedTarget.startsWith(fPath + '/');
+    }) || normalizedTarget === '/dashboard' || normalizedTarget === '/tickets' || normalizedTarget === '/access-denied' || (userRole === 'ADMIN' && normalizedTarget.startsWith('/admin'));
 
     if (hasPermission) {
       return true;

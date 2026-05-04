@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, delay } from 'rxjs/operators';
-import { Profile, Module, Option, AdminDataResponse } from '../models/admin.model';
+import { Profile, Module, Option, AdminDataResponse, ProfileOption } from '../models/admin.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -23,6 +23,10 @@ export class AdminService {
   private mockOptions: Option[] = [
     { id: 'O-1', module_id: 'M-1', name: 'Listado de Tickets', path: '/tickets' },
     { id: 'O-2', module_id: 'M-2', name: 'Administracion', path: '/admin' }
+  ];
+  private mockProfileOptions: ProfileOption[] = [
+    { id: 1, profile_id: 'P-1', option_id: 'O-1' },
+    { id: 2, profile_id: 'P-1', option_id: 'O-2' }
   ];
 
   constructor() {}
@@ -154,6 +158,34 @@ export class AdminService {
     return this.http.delete<void>(`${this.apiUrl}/admin/options/${id}`).pipe(
       catchError(() => {
         this.mockOptions = this.mockOptions.filter((item) => String(item.id) !== String(id));
+        return of(void 0).pipe(delay(200));
+      })
+    );
+  }
+
+  getProfileOptions(): Observable<AdminDataResponse<ProfileOption>> {
+    return this.http.get<AdminDataResponse<ProfileOption>>(`${this.apiUrl}/admin/profile-options`).pipe(
+      catchError(() => of({ status: 'mock', data: this.mockProfileOptions }).pipe(delay(300)))
+    );
+  }
+
+  createProfileOption(payload: Omit<ProfileOption, 'id'>): Observable<ProfileOption> {
+    return this.http.post<ProfileOption>(`${this.apiUrl}/admin/profile-options`, payload).pipe(
+      catchError(() => {
+        const po: ProfileOption = {
+          id: Date.now(),
+          ...payload
+        };
+        this.mockProfileOptions = [po, ...this.mockProfileOptions];
+        return of(po).pipe(delay(250));
+      })
+    );
+  }
+
+  deleteProfileOption(id: string | number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/profile-options/${id}`).pipe(
+      catchError(() => {
+        this.mockProfileOptions = this.mockProfileOptions.filter((item) => String(item.id) !== String(id));
         return of(void 0).pipe(delay(200));
       })
     );

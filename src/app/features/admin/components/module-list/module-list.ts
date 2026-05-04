@@ -4,14 +4,16 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
 import { Module } from '../../models/admin.model';
+import { ModuleForm } from '../module-form/module-form';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-module-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatChipsModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatChipsModule, MatDialogModule],
   template: `
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
       <div class="p-4 flex justify-between items-center border-b border-gray-100">
@@ -75,6 +77,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 export class ModuleList implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly toast = inject(ToastService);
+  private readonly dialog = inject(MatDialog);
   
   public readonly isLoading = signal<boolean>(true);
   dataSource = new MatTableDataSource<Module>([]);
@@ -99,38 +102,24 @@ export class ModuleList implements OnInit {
   }
 
   createModule(): void {
-    const name = window.prompt('Nombre del modulo:')?.trim();
-    if (!name) {
-      return;
-    }
+    const dialogRef = this.dialog.open(ModuleForm, {
+      width: '450px',
+      data: {}
+    });
 
-    const icon = window.prompt('Icono Material del modulo:', 'view_module')?.trim() || 'view_module';
-    const isActive = window.confirm('El modulo estara activo?');
-
-    this.adminService.createModule({ name, icon, is_active: isActive }).subscribe({
-      next: () => {
-        this.toast.success('Modulo creado');
-        this.loadModules();
-      },
-      error: () => this.toast.error('No fue posible crear el modulo')
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadModules();
     });
   }
 
   editModule(module: Module): void {
-    const name = window.prompt('Editar nombre del modulo:', module.name)?.trim();
-    if (!name) {
-      return;
-    }
+    const dialogRef = this.dialog.open(ModuleForm, {
+      width: '450px',
+      data: { module }
+    });
 
-    const icon = window.prompt('Editar icono Material:', module.icon)?.trim() || module.icon;
-    const isActive = window.confirm('Marcar modulo como activo?');
-
-    this.adminService.updateModule(module.id, { name, icon, is_active: isActive }).subscribe({
-      next: () => {
-        this.toast.success('Modulo actualizado');
-        this.loadModules();
-      },
-      error: () => this.toast.error('No fue posible actualizar el modulo')
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.loadModules();
     });
   }
 

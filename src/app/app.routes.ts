@@ -27,7 +27,14 @@ export const routes: Routes = [
       {
         path: 'admin',
         canActivate: [adminGuard],
-        loadComponent: () => import('./features/admin/pages/admin-dashboard/admin-dashboard').then(m => m.AdminDashboard)
+        loadComponent: () => import('./features/admin/pages/admin-dashboard/admin-dashboard').then(m => m.AdminDashboard),
+        children: [
+          { path: '', redirectTo: 'perfiles', pathMatch: 'full' },
+          { path: 'perfiles', loadComponent: () => import('./features/admin/components/profile-list/profile-list').then(m => m.ProfileList) },
+          { path: 'modulos', loadComponent: () => import('./features/admin/components/module-list/module-list').then(m => m.ModuleList) },
+          { path: 'opciones', loadComponent: () => import('./features/admin/components/option-list/option-list').then(m => m.OptionList) },
+          { path: 'asignaciones', loadComponent: () => import('./features/admin/components/assignment-list/assignment-list').then(m => m.AssignmentList) }
+        ]
       },
       {
         path: 'access-denied',
